@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "runner",
+    "start": "runner --frontend-url localhost:3000",
     "dev": "concurrently \"runner --frontend-url localhost:3000\" \"cd frontend && BROWSER=none npm start\"",
     "lint": "eslint . --ignore-path .gitignore --ext .js",
     "lint:fix": "eslint . --ignore-path .gitignore --ext .js --fix"
