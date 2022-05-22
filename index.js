@@ -3,7 +3,9 @@
 // TODO: WARNING evil players and merlin are the only players that should know who good and
 // evil players are however this information is broadcasted to all players (we do not handle
 // secret state)
+// TODO: this should be easy to unit test
 
+// TODO: shared constants from frontend and backend?
 const Status = Object.freeze({
   PreGame: 'preGame',
   InGame: 'inGame',
@@ -166,7 +168,6 @@ function onPlayerMove(plr, move, boardGame) {
         if (teamSet.size === requiredPlayerCount) {
           if (Array.from(teamSet).every((teamPlayer) => shuffledPlayers.includes(teamPlayer))) {
             // this is a valid team to propose, we now need the team to go up for vote by players
-            state.indexOfLeader = (state.indexOfLeader + 1) % shuffledPlayers.length;
             state.suggestedTeam = Array.from(teamSet);
             state.plrToVote = {}; // reset votes to empty for the voting phase
             state.phase = Phase.VoteTeam;
@@ -198,6 +199,7 @@ function onPlayerMove(plr, move, boardGame) {
           state.phase = Phase.Quest;
           state.plrToQuestVote = {}; // reset previous quest vote
         } else {
+          state.indexOfLeader = (state.indexOfLeader + 1) % shuffledPlayers.length;
           state.phase = Phase.BuildTeam;
         }
       }
@@ -214,7 +216,7 @@ function onPlayerMove(plr, move, boardGame) {
       // all quest votes are in
       const requiredPlayerCount = QUEST_PLAYERS_COUNT[shuffledPlayers.length][indexOfQuest];
       if (Object.keys(state.plrToQuestVote) === requiredPlayerCount) {
-        if (Object.values(state.prToQuestVote).every(Boolean)) {
+        if (Object.values(state.plrToQuestVote).every(Boolean)) {
           state.successfulQuestCount += 1;
         }
         state.indexOfQuest += 1;
@@ -224,6 +226,7 @@ function onPlayerMove(plr, move, boardGame) {
           return { state };
         } if (failedQuestCount >= 3) {
           state.phase = null;
+          state.winner = Winner.Evil;
           return { state, finished: true };
         }
       }
